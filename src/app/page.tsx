@@ -79,9 +79,9 @@ export default function Dashboard() {
       })
       
       router.push(`/test/${testId}`)
-    } catch (e) {
+    } catch (e: any) {
       console.error(e)
-      alert("Failed to generate test. Please try again.")
+      alert("Failed to generate test. Error: " + (e?.message || JSON.stringify(e) || "Unknown error"))
     } finally {
       setIsGenerating(false)
     }

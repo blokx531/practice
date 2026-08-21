@@ -69,7 +69,7 @@ export default function Dashboard() {
       const actualSubject = mode === "simulation" ? "all" : subject;
       const actualTopic = (mode === "simulation" || mode === "practice") ? "all" : topic;
 
-      const testId = await generateTest({
+      const result = await generateTest({
         mode,
         year: actualYear,
         subject: actualSubject,
@@ -78,10 +78,15 @@ export default function Dashboard() {
         timerEnabled: mode === "practice" ? timerEnabled : true
       })
       
-      router.push(`/test/${testId}`)
+      if (!result.success) {
+        alert("Failed to generate test. Error: " + result.error)
+        return
+      }
+
+      router.push(`/test/${result.testId}`)
     } catch (e: any) {
       console.error(e)
-      alert("Failed to generate test. Error: " + (e?.message || JSON.stringify(e) || "Unknown error"))
+      alert("Network Error: " + (e?.message || JSON.stringify(e) || "Unknown error"))
     } finally {
       setIsGenerating(false)
     }

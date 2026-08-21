@@ -28,7 +28,10 @@ export async function checkAvailability(params: {
   }
 
   const { count, error } = await query
-  if (error) throw new Error(error.message)
+  if (error) {
+    console.error("checkAvailability error:", error.message)
+    return 0
+  }
   return count || 0
 }
 
@@ -58,10 +61,10 @@ export async function generateTest(params: {
   }
 
   const { data: questions, error } = await query
-  if (error) throw new Error(error.message)
+  if (error) return { success: false, error: error.message }
 
   if (!questions || questions.length === 0) {
-    throw new Error("No questions available for the selected filters.")
+    return { success: false, error: "No questions available for the selected filters." }
   }
 
   // Shuffle and limit
@@ -83,9 +86,9 @@ export async function generateTest(params: {
     .select("test_id")
     .single()
 
-  if (testError) throw new Error(testError.message)
+  if (testError) return { success: false, error: testError.message }
 
-  return testRecord.test_id
+  return { success: true, testId: testRecord.test_id }
 }
 
 export async function getMetadata() {

@@ -1,10 +1,12 @@
 "use server"
 
 import { supabase } from "@/lib/supabase"
+import { getUserId } from "@/utils/supabase/server"
 
-const MOCK_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 export async function submitTest(testId: string, answers: Record<string, { option: string, confidence: string }>) {
+  const userId = await getUserId();
+  
   // 1. Fetch test details and correct answers
   const { data: testRecord, error: testError } = await supabase
     .from("user_tests")
@@ -45,7 +47,7 @@ export async function submitTest(testId: string, answers: Record<string, { optio
       else incorrectCount++
 
       attemptRecords.push({
-        user_id: MOCK_USER_ID,
+        user_id: userId,
         question_id: qId,
         test_id: testId,
         selected_option: userAnswer.option,
@@ -80,7 +82,7 @@ export async function submitTest(testId: string, answers: Record<string, { optio
   const { data: existingStates } = await supabase
     .from("user_question_states")
     .select("*")
-    .eq("user_id", MOCK_USER_ID)
+    .eq("user_id", userId)
     .in("question_id", attemptRecords.map(a => a.question_id))
 
   const existingStatesMap = Object.fromEntries((existingStates || []).map(s => [s.question_id, s]))
@@ -98,7 +100,7 @@ export async function submitTest(testId: string, answers: Record<string, { optio
     const confField = attempt.confidence ? `${attempt.confidence}_count` : null
 
     return {
-      user_id: MOCK_USER_ID,
+      user_id: userId,
       question_id: attempt.question_id,
       attempt_count: ex.attempt_count + 1,
       correct_count: ex.correct_count + (attempt.is_correct ? 1 : 0),

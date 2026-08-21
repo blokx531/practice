@@ -1,16 +1,16 @@
 import { supabase } from "@/lib/supabase"
+import { getUserId } from "@/utils/supabase/server"
 import MistakesClient from "./mistakes-client"
 
 export const dynamic = "force-dynamic";
 
-const MOCK_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 export default async function MistakesPage() {
   // Fetch question states for the user
   const { data: states } = await supabase
     .from("user_question_states")
     .select("*")
-    .eq("user_id", MOCK_USER_ID)
+    .eq("user_id", (await getUserId()))
 
   const mistakes = states?.filter(s => {
     const owed = (s.wrong_count || 0) * 5;

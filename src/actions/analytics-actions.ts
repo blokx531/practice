@@ -1,21 +1,21 @@
 "use server"
 
 import { supabase } from "@/lib/supabase"
+import { getUserId } from "@/utils/supabase/server"
 
-const MOCK_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 export async function getAnalytics() {
   const [testsResponse, attemptsResponse] = await Promise.all([
     supabase
       .from("user_tests")
       .select("*")
-      .eq("user_id", MOCK_USER_ID)
+      .eq("user_id", (await getUserId()))
       .order("started_at", { ascending: false }),
       
     supabase
       .from("user_attempts")
       .select("is_correct, confidence, canonical_questions(subject, topic_tag)")
-      .eq("user_id", MOCK_USER_ID)
+      .eq("user_id", (await getUserId()))
   ])
 
   if (testsResponse.error) throw new Error(testsResponse.error.message)

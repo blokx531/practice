@@ -1,9 +1,9 @@
 "use server"
 
 import { supabase } from "@/lib/supabase"
+import { getUserId } from "@/utils/supabase/server"
 
 // Mock user ID for MVP
-const MOCK_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 export async function checkAvailability(params: {
   mode: string;
@@ -76,7 +76,7 @@ export async function generateTest(params: {
   const { data: testRecord, error: testError } = await supabase
     .from("user_tests")
     .insert({
-      user_id: MOCK_USER_ID,
+      user_id: (await getUserId()),
       test_type: params.mode,
       configuration: {
         ...params,

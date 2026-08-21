@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { login, signup } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function LoginPage() {
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -29,8 +31,11 @@ export default function LoginPage() {
       
       if (result?.error) {
         setError(result.error)
+      } else if (result?.success) {
+        router.push('/')
       }
     } catch (e: any) {
+      if (e.message === 'NEXT_REDIRECT') throw e;
       setError(e.message || "An unexpected error occurred.")
     } finally {
       setIsLoading(false)

@@ -1,7 +1,7 @@
 "use server"
 
 import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string
@@ -22,7 +22,7 @@ export async function login(formData: FormData) {
     return { error: error.message }
   }
 
-  redirect('/')
+  return { success: true }
 }
 
 export async function signup(formData: FormData) {
@@ -46,7 +46,7 @@ export async function signup(formData: FormData) {
 
   // Next.js redirect doesn't work inside try/catch if it catches the throw
   // But here we are fine.
-  redirect('/')
+  return { success: true }
 }
 
 export async function signout() {

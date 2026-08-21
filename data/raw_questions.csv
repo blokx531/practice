@@ -1,0 +1,1 @@
+question,options,answer' in data.get('content', ''):\n        content = data['content']\n        start_idx = content.find('question,options,answer')\n        end_idx = content.rfind('
